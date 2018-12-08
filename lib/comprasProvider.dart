@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'compra.dart';
+import 'dart:async';
 
 class ComprasProvider {
   Database db;
@@ -9,19 +10,25 @@ class ComprasProvider {
   final _columnDescricao = 'descricao';
   final _columnStatus = 'status';
 
-  Future open(String path) async {
-    db = await openDatabase(
-      path,
-      onCreate: (Database dbase, int version) async {
-        await dbase.execute('''
+  Future open() async {
+    String path = 'compras.db';
+    try {
+      db = await openDatabase(
+        path,
+        version: 1,
+        onCreate: (Database dbase, int version) async {
+          await dbase.execute('''
           create table $_tbCompras (
             $_columnId integer primary key,
             $_columnDescricao text not null,
             $_columnStatus integer not null
           )
         ''');
-      },
-    );
+        },
+      );
+    } catch (e) {
+      print('Erro ao acessar DB: $e');
+    }
   }
 
   Future<Compra> save(Compra compra) async {
@@ -30,11 +37,11 @@ class ComprasProvider {
       compra.id = await db.insert(_tbCompras, compra.toMap());
     } else {
       compra.id = await db.update(
-        _tbCompras, 
+        _tbCompras,
         compra.toMap(),
         where: '$_columnId = ?',
         whereArgs: [compra.id],
-      ); 
+      );
     }
     return compra;
   }
@@ -51,7 +58,7 @@ class ComprasProvider {
       where: '$_columnId = ?',
       whereArgs: [id],
     );
-    for (var c in lista)  {
+    for (var c in lista) {
       return Compra.fromMap(c);
     }
     return null;
