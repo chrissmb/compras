@@ -68,7 +68,13 @@ class ListaComprasState extends State<ListaCompras> {
           child: Text(compra.descricao[0]),
           backgroundColor: Colors.grey,
         ),
-        title: Text(compra.descricao),
+        title: Text(
+          compra.descricao,
+          style: TextStyle(
+            color: Colors.grey,
+            decoration: TextDecoration.lineThrough,
+          ),
+        ),
         onTap: () => _switchStatus(compra),
       );
     } else {
@@ -77,13 +83,7 @@ class ListaComprasState extends State<ListaCompras> {
           child: Text(compra.descricao[0]),
           backgroundColor: Colors.blue,
         ),
-        title: Text(
-          compra.descricao,
-          style: TextStyle(
-            color: Colors.grey,
-            decoration: TextDecoration.lineThrough,
-          ),
-        ),
+        title: Text(compra.descricao),
         onTap: () => _switchStatus(compra),
       );
     }
