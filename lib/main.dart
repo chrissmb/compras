@@ -7,6 +7,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Lista de Compras',
       home: Scaffold(
         appBar: AppBar(
           title: Text('Lista de Compras'),
