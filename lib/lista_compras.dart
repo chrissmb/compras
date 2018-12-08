@@ -46,9 +46,12 @@ class ListaComprasState extends State<ListaCompras> {
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
-        onPressed: () {
-          Navigator.push(context,
+        onPressed: () async {
+          var retorno = await Navigator.push(context,
               MaterialPageRoute(builder: (context) => FormCompra(_provider)));
+          if (retorno == null) {
+            _getCompras();
+          }
         },
       ),
     );
@@ -64,7 +67,7 @@ class ListaComprasState extends State<ListaCompras> {
         ),
         leading: CircleAvatar(
           radius: 25.0,
-          child: Text(compra.descricao[0]),
+          child: Text('${compra.id}'),
           backgroundColor: compra.status ? Colors.grey : Colors.blue,
         ),
         title: Text(
