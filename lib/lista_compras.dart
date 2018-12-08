@@ -57,36 +57,23 @@ class ListaComprasState extends State<ListaCompras> {
   List<ListTile> getListTiles() {
     if (_compras == null) return List<ListTile>();
     return _compras.map<ListTile>((compra) {
-      return formatListTile(compra);
-    }).toList();
-  }
-
-  ListTile formatListTile(Compra compra) {
-    if (compra.status) {
       return ListTile(
         leading: CircleAvatar(
           child: Text(compra.descricao[0]),
-          backgroundColor: Colors.grey,
+          backgroundColor: compra.status ? Colors.grey : Colors.blue,
         ),
         title: Text(
           compra.descricao,
           style: TextStyle(
-            color: Colors.grey,
-            decoration: TextDecoration.lineThrough,
+            color: compra.status ? Colors.grey : Colors.black,
+            decoration: compra.status
+                ? TextDecoration.lineThrough
+                : TextDecoration.none,
           ),
         ),
         onTap: () => _switchStatus(compra),
       );
-    } else {
-      return ListTile(
-        leading: CircleAvatar(
-          child: Text(compra.descricao[0]),
-          backgroundColor: Colors.blue,
-        ),
-        title: Text(compra.descricao),
-        onTap: () => _switchStatus(compra),
-      );
-    }
+    }).toList();
   }
 
   void _switchStatus(Compra compra) {
