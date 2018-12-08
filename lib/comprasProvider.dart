@@ -69,4 +69,6 @@ class ComprasProvider {
       return false;
     }
   }
+
+  Future close() async => db.close();
 }
