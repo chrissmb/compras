@@ -27,6 +27,7 @@ class FormCompraState extends State<FormCompra> {
           child: Padding(
             padding: EdgeInsets.all(20),
             child: TextField(
+              onSubmitted: (s) => saveCompra(),
               style: TextStyle(
                 fontSize: 30.0,
                 color: Colors.black,
