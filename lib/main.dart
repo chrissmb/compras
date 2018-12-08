@@ -12,6 +12,12 @@ class MyApp extends StatelessWidget {
         ),
         // TODO: Configurar body
         body: Container(),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
+          onPressed: () => print('teste'),
+        ),
       ),
     );
   }
