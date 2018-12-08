@@ -17,7 +17,6 @@ class FormCompraState extends State<FormCompra> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text('Digite a descrição'),
@@ -39,6 +38,8 @@ class FormCompraState extends State<FormCompra> {
   void saveCompra() {
     widget.provider.save(
       Compra.novo(txtDescricaoCtrl.text),
-    ).then((id) => dispose());
+    ).then((id) {
+      Navigator.pop(context);
+    });
   }
 }
