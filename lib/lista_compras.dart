@@ -37,10 +37,10 @@ class ListaComprasState extends State<ListaCompras> {
       appBar: AppBar(
         title: Text('Lista de Compras'),
         actions: <Widget>[
-          IconButton(
+          /* IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () => _getCompras(),
-          ),
+          ), */
           PopupMenuButton<menu>(
             onSelected: selectItemMenu,
             icon: Icon(Icons.more_vert),
@@ -85,7 +85,10 @@ class ListaComprasState extends State<ListaCompras> {
         ),
         leading: CircleAvatar(
           radius: 25.0,
-          child: Text('${compra.id}'),
+          child: Text(
+            compra.descricao[0],
+            style: TextStyle(fontSize: 25.0),
+          ),
           backgroundColor: compra.status ? Colors.grey : Colors.blue,
         ),
         title: Text(
@@ -99,6 +102,15 @@ class ListaComprasState extends State<ListaCompras> {
           ),
         ),
         onTap: () => _switchStatus(compra),
+        onLongPress: () {
+          _dialogMenu(
+            'Deseja realmente exluir este item?', 
+            () {
+              _provider.delete(compra.id);
+              _getCompras();
+            },
+          );
+        },
       );
     }).toList();
   }
