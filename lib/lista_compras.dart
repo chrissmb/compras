@@ -5,6 +5,8 @@ import 'form_compra.dart';
 
 enum menu { deleteChecked, deleteAll }
 
+typedef void FuncaoMenu();
+
 class ListaCompras extends StatefulWidget {
   @override
   ListaComprasState createState() => ListaComprasState();
@@ -119,19 +121,61 @@ class ListaComprasState extends State<ListaCompras> {
   void selectItemMenu(dynamic choice) {
     switch (choice) {
       case menu.deleteChecked:
-        _compras.forEach((compra) {
-          if (compra.status) {
-            _provider.delete(compra.id);
-          }
-        });
+        _dialogMenu('Deseja realmente deletar '
+            'as compras selecionadas?', _deleteChecked);
         break;
       case menu.deleteAll:
-        _compras.forEach((compra) {
-          _provider.delete(compra.id);
-        });
+        _dialogMenu('Deseja realmente deletar '
+            'todas as compras?', _deleteAllCompras);
         break;
     }
     _getCompras();
   }
+
+  void _deleteChecked() {
+    _compras.forEach((compra) {
+      if (compra.status) {
+        _provider.delete(compra.id);
+      }
+    });
+    _getCompras();
+  }
+
+  void _deleteAllCompras() {
+    _compras.forEach((compra) {
+      _provider.delete(compra.id);
+    });
+    _getCompras();
+  }
+
+  Future<void> _dialogMenu(String msg, FuncaoMenu func) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Atenção'),
+        content: SingleChildScrollView(
+          child: Text(msg),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Cancelar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: Text('Confirmar'),
+            onPressed: () {
+              func();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
 }
