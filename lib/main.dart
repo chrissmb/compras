@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'lista_compras.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
           title: Text('Lista de Compras'),
         ),
         // TODO: Configurar body
-        body: Container(),
+        body: ListaCompras(),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           backgroundColor: Colors.green,
