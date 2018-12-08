@@ -58,13 +58,19 @@ class ListaComprasState extends State<ListaCompras> {
     if (_compras == null) return List<ListTile>();
     return _compras.map<ListTile>((compra) {
       return ListTile(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 20.0,
+          vertical: 10.0,
+        ),
         leading: CircleAvatar(
+          radius: 25.0,
           child: Text(compra.descricao[0]),
           backgroundColor: compra.status ? Colors.grey : Colors.blue,
         ),
         title: Text(
           compra.descricao,
           style: TextStyle(
+            fontSize: 20.0,
             color: compra.status ? Colors.grey : Colors.black,
             decoration: compra.status
                 ? TextDecoration.lineThrough
@@ -80,6 +86,7 @@ class ListaComprasState extends State<ListaCompras> {
     setState(() {
       compra.status = !compra.status;
     });
+    _provider.save(compra);
   }
 
   void _getCompras() {
