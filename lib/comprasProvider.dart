@@ -36,7 +36,7 @@ class ComprasProvider {
     if (compra.id == null) {
       compra.id = await db.insert(_tbCompras, compra.toMap());
     } else {
-      compra.id = await db.update(
+      await db.update(
         _tbCompras,
         compra.toMap(),
         where: '$_columnId = ?',
