@@ -3,6 +3,8 @@ import 'compra.dart';
 import 'comprasProvider.dart';
 import 'form_compra.dart';
 
+enum menu { deleteChecked, deleteAll }
+
 class ListaCompras extends StatefulWidget {
   @override
   ListaComprasState createState() => ListaComprasState();
@@ -37,6 +39,20 @@ class ListaComprasState extends State<ListaCompras> {
             icon: Icon(Icons.refresh),
             onPressed: () => _getCompras(),
           ),
+          PopupMenuButton<menu>(
+            onSelected: selectItemMenu,
+            icon: Icon(Icons.more_vert),
+            itemBuilder: (context) => <PopupMenuEntry<menu>>[
+              const PopupMenuItem(
+                value: menu.deleteChecked,
+                child: Text('Deletar compras selecionadas'),
+              ),
+              const PopupMenuItem(
+                value: menu.deleteAll,
+                child: Text('Deletar todas compras'),
+              ),
+            ],
+          )
         ],
       ),
       body: ListView(
@@ -99,4 +115,23 @@ class ListaComprasState extends State<ListaCompras> {
       });
     });
   }
+
+  void selectItemMenu(dynamic choice) {
+    switch (choice) {
+      case menu.deleteChecked:
+        _compras.forEach((compra) {
+          if (compra.status) {
+            _provider.delete(compra.id);
+          }
+        });
+        break;
+      case menu.deleteAll:
+        _compras.forEach((compra) {
+          _provider.delete(compra.id);
+        });
+        break;
+    }
+    _getCompras();
+  }
+
 }
