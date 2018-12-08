@@ -26,8 +26,8 @@ class FormCompraState extends State<FormCompra> {
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(20),
-            child: TextField(
-              onSubmitted: (s) => saveCompra(),
+            child: TextFormField(
+              onFieldSubmitted: (s) => saveCompra(),
               style: TextStyle(
                 fontSize: 30.0,
                 color: Colors.black,
@@ -37,6 +37,11 @@ class FormCompraState extends State<FormCompra> {
                 labelText: 'Descrição',
                 labelStyle: TextStyle(fontSize: 30.0),
               ),
+              validator: (valor) {
+                if (valor.trim().isEmpty) {
+                  return 'Por favor, digite a descrição';
+                }
+              },
             ),
           ),
         ),
@@ -50,12 +55,14 @@ class FormCompraState extends State<FormCompra> {
   }
 
   void saveCompra() {
-    widget.provider
-        .save(
-      Compra.novo(txtDescricaoCtrl.text),
-    )
-        .then((id) {
-      Navigator.pop(context);
-    });
+    if (_formKey.currentState.validate()) {
+      widget.provider
+          .save(
+        Compra.novo(txtDescricaoCtrl.text.trim()),
+      )
+          .then((id) {
+        Navigator.pop(context);
+      });
+    }
   }
 }
