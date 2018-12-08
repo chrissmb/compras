@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'lista_compras.dart';
+import 'form_compra.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,7 +9,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Lista de Compras',
-      home: Scaffold(
+      home: Home(),
+    );
+  }
+}
+
+class Home extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
         appBar: AppBar(
           title: Text('Lista de Compras'),
         ),
@@ -18,10 +28,12 @@ class MyApp extends StatelessWidget {
           child: Icon(Icons.add),
           backgroundColor: Colors.green,
           foregroundColor: Colors.white,
-          onPressed: () => print('teste'),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => FormCompra()));
+          },
         ),
-      ),
-    );
+      );
   }
 
 }
