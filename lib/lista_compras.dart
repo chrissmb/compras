@@ -13,7 +13,6 @@ class ListaComprasState extends State<ListaCompras> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _provider.open('compras.sqlite').then((d) {
       getCompras();
@@ -22,14 +21,12 @@ class ListaComprasState extends State<ListaCompras> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _provider.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return ListView(
       children: <ListTile>[],
     );
