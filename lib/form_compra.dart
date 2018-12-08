@@ -23,8 +23,21 @@ class FormCompraState extends State<FormCompra> {
       ),
       body: Form(
         key: _formKey,
-        child: TextField(
-          controller: txtDescricaoCtrl,
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: TextField(
+              style: TextStyle(
+                fontSize: 30.0,
+                color: Colors.black,
+              ),
+              controller: txtDescricaoCtrl,
+              decoration: InputDecoration(
+                labelText: 'Descrição',
+                labelStyle: TextStyle(fontSize: 30.0),
+              ),
+            ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -36,9 +49,11 @@ class FormCompraState extends State<FormCompra> {
   }
 
   void saveCompra() {
-    widget.provider.save(
+    widget.provider
+        .save(
       Compra.novo(txtDescricaoCtrl.text),
-    ).then((id) {
+    )
+        .then((id) {
       Navigator.pop(context);
     });
   }
