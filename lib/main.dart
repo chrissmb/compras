@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('Lista de Compras'),
         ),
+        // TODO: Configurar body
         body: Container(),
       ),
     );
