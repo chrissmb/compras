@@ -9,18 +9,18 @@ class Compra {
         assert(id != null),
         assert(id > 0),
         assert(status != null);
-  
+
   Compra.novo(this.descricao)
       : status = false,
         assert(descricao != null),
         assert(descricao != '');
-  
+
   Compra.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     descricao = map['descricao'];
-    status = map['status'];
+    status = map['status'] == 1 ? true : false;
   }
-  
+
   toMap() {
     var map = <String, dynamic>{
       'descricao': descricao,
