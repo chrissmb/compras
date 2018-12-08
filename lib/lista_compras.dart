@@ -15,10 +15,8 @@ class ListaComprasState extends State<ListaCompras> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _provider.getALl().then((l) {
-      setState(() {
-        _compras = l;
-      });
+    _provider.open('compras.sqlite').then((d) {
+      getCompras();
     });
   }
 
@@ -76,12 +74,12 @@ class ListaComprasState extends State<ListaCompras> {
       compra.status = !compra.status;
     });
   }
+
+  void getCompras() {
+    _provider.getALl().then((l) {
+      setState(() {
+        _compras = l;
+      });
+    });
+  }
 }
-
-/*
-
-            style: TextStyle(
-              color: Colors.grey,
-              decoration: TextDecoration.lineThrough,
-            ),
-*/
