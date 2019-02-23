@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'compra.dart';
 import 'comprasProvider.dart';
 import 'form_compra.dart';
+import 'item_compra.dart';
 
 enum menu { deleteChecked, deleteAll }
 
@@ -15,6 +16,7 @@ class ListaCompras extends StatefulWidget {
 class ListaComprasState extends State<ListaCompras> {
   List<Compra> _compras;
   ComprasProvider _provider;
+  List<ItemCompra> _listItem = [];
 
   @override
   void initState() {
@@ -58,7 +60,7 @@ class ListaComprasState extends State<ListaCompras> {
         ],
       ),
       body: ListView(
-        children: getListTiles(),
+        children: _listItem,
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -75,57 +77,48 @@ class ListaComprasState extends State<ListaCompras> {
     );
   }
 
-  List<ListTile> getListTiles() {
-    if (_compras == null) return List<ListTile>();
-    return _compras.map<ListTile>((compra) {
-      return ListTile(
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 20.0,
-          vertical: 10.0,
-        ),
-        leading: CircleAvatar(
-          radius: 25.0,
-          child: Text(
-            compra.descricao[0],
-            style: TextStyle(fontSize: 25.0),
-          ),
-          backgroundColor: compra.status ? Colors.grey : Colors.blue,
-        ),
-        title: Text(
-          compra.descricao,
-          style: TextStyle(
-            fontSize: 20.0,
-            color: compra.status ? Colors.grey : Colors.black,
-            decoration: compra.status
-                ? TextDecoration.lineThrough
-                : TextDecoration.none,
-          ),
-        ),
-        onTap: () => _switchStatus(compra),
-        onLongPress: () {
-          _dialogMenu(
-            'Deseja realmente exluir este item?', 
-            () {
-              _provider.delete(compra.id);
-              _getCompras();
-            },
-          );
-        },
-      );
-    }).toList();
+  void _getListTiles() {
+    if (_compras == null) _compras = [];
+    List<ItemCompra> listItem = [];
+
+    for (var i = 0; i < _compras.length; i++) {
+      listItem.add(ItemCompra(
+        compra: _compras[i],
+        index: i,
+        switchStatus: _switchStatus,
+        excluiCompra: _confirmaExclusaoLongPress,
+        onHorizontalDrangEnd: (_) => print('Arrastei'),
+      ));
+
+      setState(() {
+        _listItem = listItem;
+      });
+    }
+  }
+
+  void _confirmaExclusaoLongPress(int idCompra) {
+    _dialogMenu(
+      'Deseja realmente exluir este item?', 
+      () {
+        _provider.delete(idCompra);
+        _getCompras();
+      },
+    );
   }
 
   void _switchStatus(Compra compra) {
-    setState(() {
-      compra.status = !compra.status;
-    });
+    compra.status = !compra.status;
     _provider.save(compra);
+    setState(() {
+      _getCompras();
+    });
   }
 
   void _getCompras() {
     _provider.getALl().then((l) {
       setState(() {
         _compras = l;
+        _getListTiles();
       });
     });
   }
@@ -160,7 +153,7 @@ class ListaComprasState extends State<ListaCompras> {
     _getCompras();
   }
 
-  Future<void> _dialogMenu(String msg, FuncaoMenu func) async {
+  Future<void> _dialogMenu(String msg, FuncaoMenu func, {FuncaoMenu cancel}) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap button!
@@ -174,6 +167,7 @@ class ListaComprasState extends State<ListaCompras> {
           FlatButton(
             child: Text('Cancelar'),
             onPressed: () {
+              if (cancel != null) print(cancel);
               Navigator.of(context).pop();
             },
           ),
