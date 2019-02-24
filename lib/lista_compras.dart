@@ -81,19 +81,22 @@ class ListaComprasState extends State<ListaCompras> {
     if (_compras == null) _compras = [];
     List<ItemCompra> listItem = [];
 
-    for (var i = 0; i < _compras.length; i++) {
+    for (var compra in _compras) {
       listItem.add(ItemCompra(
-        compra: _compras[i],
-        index: i,
+        compra: compra,
         switchStatus: _switchStatus,
         excluiCompra: _confirmaExclusaoLongPress,
-        onHorizontalDrangEnd: (_) => print('Arrastei'),
+        renameCompra: _provider.save,
       ));
 
       setState(() {
         _listItem = listItem;
       });
     }
+  }
+
+  void renomeia(Compra compra) {
+    _provider.save(compra).then((_) => _getCompras);
   }
 
   void _confirmaExclusaoLongPress(int idCompra) {
