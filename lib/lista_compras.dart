@@ -39,10 +39,6 @@ class ListaComprasState extends State<ListaCompras> {
       appBar: AppBar(
         title: Text('Lista de Compras'),
         actions: <Widget>[
-          /* IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () => _getCompras(),
-          ), */
           PopupMenuButton<menu>(
             onSelected: selectItemMenu,
             icon: Icon(Icons.more_vert),
@@ -62,7 +58,7 @@ class ListaComprasState extends State<ListaCompras> {
       body: ListView(
         children: _listItem,
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: _isKeyboardActive()? Text('') : FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
@@ -188,6 +184,10 @@ class ListaComprasState extends State<ListaCompras> {
         );
       },
     );
+  }
+
+  bool _isKeyboardActive() {
+    return MediaQuery.of(context).viewInsets.bottom != 0;
   }
 
 }
