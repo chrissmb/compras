@@ -106,6 +106,9 @@ class ListaComprasState extends State<ListaCompras> {
         _provider.delete(idCompra);
         _getCompras();
       },
+      cancel: () {
+        _getCompras();
+      }
     );
   }
 
@@ -170,7 +173,7 @@ class ListaComprasState extends State<ListaCompras> {
           FlatButton(
             child: Text('Cancelar'),
             onPressed: () {
-              if (cancel != null) print(cancel);
+              if (cancel != null) cancel();
               Navigator.of(context).pop();
             },
           ),

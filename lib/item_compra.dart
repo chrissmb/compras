@@ -40,25 +40,31 @@ class _ItemCompraState extends State<ItemCompra> {
   @override
   Widget build(BuildContext context) {
     Compra compra = widget.compra;
-    return GestureDetector(
-      onHorizontalDragEnd: (_) => widget.excluiCompra(compra.id),
-      onTap: () => widget.switchStatus(compra),
-      onLongPress: _alternaEdicao,
+    return Dismissible(
+      key: ObjectKey(compra),
+      onDismissed: (d) => widget.excluiCompra(compra.id),
       child: ListTile(
+        onTap: () => widget.switchStatus(compra),
+        onLongPress: _alternaEdicao,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 20.0,
           vertical: 10.0,
         ),
-        leading: CircleAvatar(
-          radius: 25.0,
-          child: Text(
-            compra.descricao[0],
-            style: TextStyle(fontSize: 25.0),
-          ),
-          backgroundColor: compra.status ? Colors.grey : Colors.blue,
-        ),
+        leading: _edicao? _getConfirme(): _getAvatar(),
         title: _edicao? _getItemInput() : _getItemLabel(),
       ),
+    );
+  }
+
+  Widget _getAvatar() {
+    Compra compra = widget.compra;
+    return CircleAvatar(
+      radius: 25.0,
+      child: Text(
+        compra.descricao[0],
+        style: TextStyle(fontSize: 25.0),
+      ),
+      backgroundColor: compra.status ? Colors.grey : Colors.blue,
     );
   }
 
@@ -96,11 +102,28 @@ class _ItemCompraState extends State<ItemCompra> {
             ),
           ),
         ),
-        IconButton(
-          icon: Icon(Icons.done),
-          onPressed: _renameCompra,
-        ),
+        _getCancel(),
       ],
+    );
+  }
+
+  Widget _getConfirme() {
+    return IconButton(
+      icon: Icon(
+        Icons.done,
+        color: Colors.green,
+      ),
+      onPressed: _renameCompra,
+    );
+  }
+
+  Widget _getCancel() {
+    return IconButton(
+      icon: Icon(
+        Icons.cancel,
+        color: Colors.red,
+      ),
+      onPressed: _alternaEdicao,
     );
   }
 
