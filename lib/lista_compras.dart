@@ -160,34 +160,34 @@ class ListaComprasState extends State<ListaCompras> {
   }
 
   Future<void> _dialogMenu(String msg, FuncaoMenu func, {FuncaoMenu cancel}) async {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false, // user must tap button!
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Atenção'),
-        content: SingleChildScrollView(
-          child: Text(msg),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Cancelar'),
-            onPressed: () {
-              if (cancel != null) cancel();
-              Navigator.of(context).pop();
-            },
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Atenção'),
+          content: SingleChildScrollView(
+            child: Text(msg),
           ),
-          FlatButton(
-            child: Text('Confirmar'),
-            onPressed: () {
-              func();
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                if (cancel != null) cancel();
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Confirmar'),
+              onPressed: () {
+                func();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 }
