@@ -14,8 +14,8 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="compras"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Compras"
+        android:icon="@mipmap/ic_compras">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
