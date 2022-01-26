@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'lista_compras.dart';
+import 'page/lista_compras.dart';
 
 void main() => runApp(MyApp());
 

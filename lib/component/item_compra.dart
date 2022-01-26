@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'compra.dart';
+import '../schema/compra.dart';
 
 
 typedef SimpleAction = void Function();

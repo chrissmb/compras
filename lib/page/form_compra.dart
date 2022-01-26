@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'comprasProvider.dart';
-import 'compra.dart';
+import '../service/compraProvider.dart';
+import '../schema/compra.dart';
 
 class FormCompra extends StatefulWidget {
-  final ComprasProvider provider;
+  final CompraProvider provider;
 
   FormCompra(this.provider) : assert(provider != null);
 
@@ -58,7 +58,7 @@ class FormCompraState extends State<FormCompra> {
     if (_formKey.currentState.validate()) {
       widget.provider
           .save(
-        Compra.novo(txtDescricaoCtrl.text.trim()),
+        Compra.novo(txtDescricaoCtrl.text.trim(), null),
       )
           .then((id) {
         Navigator.pop(context);

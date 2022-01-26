@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'compra.dart';
-import 'comprasProvider.dart';
-import 'form_compra.dart';
-import 'item_compra.dart';
+import '../schema/compra.dart';
+import '../service/compraProvider.dart';
+import '../page/form_compra.dart';
+import '../component/item_compra.dart';
 
 enum menu { deleteChecked, deleteAll }
 
@@ -15,13 +15,13 @@ class ListaCompras extends StatefulWidget {
 
 class ListaComprasState extends State<ListaCompras> {
   List<Compra> _compras;
-  ComprasProvider _provider;
+  CompraProvider _provider;
   List<ItemCompra> _listItem = [];
 
   @override
   void initState() {
     super.initState();
-    _provider = ComprasProvider();
+    _provider = CompraProvider();
     _provider.open().then((d) {
       _getCompras();
     });
