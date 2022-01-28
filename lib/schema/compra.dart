@@ -2,29 +2,24 @@ import 'grupo.dart';
 import 'defaultBean.dart';
 
 class Compra implements DefaultBean {
-  int id;
+  int? id;
   String descricao;
   bool status;
-  Grupo grupo;
+  Grupo? grupo;
 
   Compra(this.id, this.descricao, this.status, this.grupo)
-      : assert(descricao != null),
-        assert(descricao != ''),
-        assert(id != null),
-        assert(id > 0),
-        assert(status != null);
+      : assert(descricao.trim().isNotEmpty),
+        assert((id ?? 0) > 0);
 
   Compra.novo(this.descricao, this.grupo)
       : status = false,
-        assert(descricao != null),
-        assert(descricao != '');
+        assert(descricao.trim().isNotEmpty);
 
-  Compra.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
-    descricao = map['descricao'];
-    status = map['status'] == 1 ? true : false;
-    grupo = new Grupo(map['grupo_id'], map['grupo_descricao']);
-  }
+  Compra.fromMap(Map<String, dynamic> map)
+      : id = map['id'],
+        descricao = map['descricao'],
+        status = map['status'] == 1 ? true : false,
+        grupo = new Grupo(map['grupo_id'], map['grupo_descricao']);
 
   toMap() {
     return <String, dynamic>{

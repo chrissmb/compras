@@ -1,3 +1,4 @@
+import 'package:compras/schema/grupo.dart';
 import 'package:flutter/material.dart';
 import '../service/compraProvider.dart';
 import '../schema/compra.dart';
@@ -5,7 +6,7 @@ import '../schema/compra.dart';
 class FormCompra extends StatefulWidget {
   final CompraProvider provider;
 
-  FormCompra(this.provider) : assert(provider != null);
+  FormCompra(this.provider);
 
   @override
   FormCompraState createState() => FormCompraState();
@@ -24,25 +25,35 @@ class FormCompraState extends State<FormCompra> {
       body: Form(
         key: _formKey,
         child: Center(
-          child: Padding(
+          child: ListView(
             padding: EdgeInsets.all(20),
-            child: TextFormField(
-              onFieldSubmitted: (s) => saveCompra(),
-              style: TextStyle(
-                fontSize: 30.0,
-                color: Colors.black,
+            children: [
+              TextFormField(
+                onFieldSubmitted: (s) => saveCompra(),
+                style: TextStyle(
+                  fontSize: 30.0,
+                  color: Colors.black,
+                ),
+                controller: txtDescricaoCtrl,
+                decoration: InputDecoration(
+                  labelText: 'Descrição',
+                  labelStyle: TextStyle(fontSize: 30.0),
+                ),
+                validator: (valor) {
+                  if (valor?.trim().isEmpty ?? true) {
+                    return 'Por favor, digite a descrição';
+                  }
+                },
               ),
-              controller: txtDescricaoCtrl,
-              decoration: InputDecoration(
-                labelText: 'Descrição',
-                labelStyle: TextStyle(fontSize: 30.0),
-              ),
-              validator: (valor) {
-                if (valor.trim().isEmpty) {
-                  return 'Por favor, digite a descrição';
-                }
-              },
-            ),
+              Autocomplete<Grupo>(
+                optionsBuilder: (textEditingValue) {
+                  if (textEditingValue.text.isEmpty) {
+                    return Iterable<Grupo>.empty();
+                  }
+                  return Iterable<Grupo>.empty();
+                },
+              )
+            ]
           ),
         ),
       ),
@@ -55,7 +66,7 @@ class FormCompraState extends State<FormCompra> {
   }
 
   void saveCompra() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       widget.provider
           .save(
         Compra.novo(txtDescricaoCtrl.text.trim(), null),

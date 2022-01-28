@@ -1,8 +1,17 @@
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
-class DefaultProvider {
-  Database db;
+abstract class DefaultProvider {
+  Database? _db;
+
+  bool get isDbOpened => _db?.isOpen ?? false;
+
+  Future get db async {
+    if (!isDbOpened) {
+      await open();
+    }
+    return _db;
+  }
 
   final _sqlCreate = '''
 
@@ -23,7 +32,7 @@ class DefaultProvider {
   Future open() async {
     String path = 'compras.db';
     try {
-      db = await openDatabase(
+      _db = await openDatabase(
         path,
         version: 1,
         onCreate: (Database dbase, int version) async {
@@ -31,9 +40,13 @@ class DefaultProvider {
         },
       );
     } catch (e) {
-      print('Erro ao acessar DB: $e');
+      throw Exception('Erro ao acessar DB: $e');
     }
   }
 
-  Future close() async => db.close();
+  Future close() async {
+    if (isDbOpened) {
+      _db!.close();
+    }
+  }
 }

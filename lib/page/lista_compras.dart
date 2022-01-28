@@ -3,6 +3,7 @@ import '../schema/compra.dart';
 import '../service/compraProvider.dart';
 import '../page/form_compra.dart';
 import '../component/item_compra.dart';
+import '../component/errorWindow.dart';
 
 enum menu { deleteChecked, deleteAll }
 
@@ -14,17 +15,16 @@ class ListaCompras extends StatefulWidget {
 }
 
 class ListaComprasState extends State<ListaCompras> {
-  List<Compra> _compras;
-  CompraProvider _provider;
+  List<Compra> _compras = [];
+  CompraProvider _provider = CompraProvider();
   List<ItemCompra> _listItem = [];
 
   @override
   void initState() {
     super.initState();
-    _provider = CompraProvider();
-    _provider.open().then((d) {
-      _getCompras();
-    });
+    _getCompras();
+    // _provider.open().then((d) {
+    // });
   }
 
   @override
@@ -58,23 +58,26 @@ class ListaComprasState extends State<ListaCompras> {
       body: ListView(
         children: _listItem,
       ),
-      floatingActionButton: _isKeyboardActive()? Text('') : FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        onPressed: () async {
-          var retorno = await Navigator.push(context,
-              MaterialPageRoute(builder: (context) => FormCompra(_provider)));
-          if (retorno == null) {
-            _getCompras();
-          }
-        },
-      ),
+      floatingActionButton: _isKeyboardActive()
+          ? Text('')
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              onPressed: () async {
+                var retorno = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FormCompra(_provider)));
+                if (retorno == null) {
+                  _getCompras();
+                }
+              },
+            ),
     );
   }
 
   void _getListTiles() {
-    if (_compras == null) _compras = [];
     List<ItemCompra> listItem = [];
 
     for (var compra in _compras) {
@@ -96,16 +99,12 @@ class ListaComprasState extends State<ListaCompras> {
   }
 
   void _confirmaExclusaoLongPress(int idCompra) {
-    _dialogMenu(
-      'Deseja realmente exluir este item?', 
-      () {
-        _provider.delete(idCompra);
-        _getCompras();
-      },
-      cancel: () {
-        _getCompras();
-      }
-    );
+    _dialogMenu('Deseja realmente exluir este item?', () {
+      _provider.delete(idCompra);
+      _getCompras();
+    }, cancel: () {
+      _getCompras();
+    });
   }
 
   void _switchStatus(Compra compra) {
@@ -117,23 +116,27 @@ class ListaComprasState extends State<ListaCompras> {
   }
 
   void _getCompras() {
-    _provider.getALl().then((l) {
+    _provider.getAll().then((l) {
       setState(() {
         _compras = l;
         _getListTiles();
       });
-    });
+    }, onError: (e) => ErrorWindow.showError(e, context));
   }
 
   void selectItemMenu(dynamic choice) {
     switch (choice) {
       case menu.deleteChecked:
-        _dialogMenu('Deseja realmente deletar '
-            'as compras selecionadas?', _deleteChecked);
+        _dialogMenu(
+            'Deseja realmente deletar '
+            'as compras selecionadas?',
+            _deleteChecked);
         break;
       case menu.deleteAll:
-        _dialogMenu('Deseja realmente deletar '
-            'todas as compras?', _deleteAllCompras);
+        _dialogMenu(
+            'Deseja realmente deletar '
+            'todas as compras?',
+            _deleteAllCompras);
         break;
     }
     _getCompras();
@@ -142,7 +145,7 @@ class ListaComprasState extends State<ListaCompras> {
   void _deleteChecked() {
     _compras.forEach((compra) {
       if (compra.status) {
-        _provider.delete(compra.id);
+        _provider.delete(compra.id!);
       }
     });
     _getCompras();
@@ -150,12 +153,13 @@ class ListaComprasState extends State<ListaCompras> {
 
   void _deleteAllCompras() {
     _compras.forEach((compra) {
-      _provider.delete(compra.id);
+      _provider.delete(compra.id!);
     });
     _getCompras();
   }
 
-  Future<void> _dialogMenu(String msg, FuncaoMenu func, {FuncaoMenu cancel}) async {
+  Future<void> _dialogMenu(String msg, FuncaoMenu func,
+      {FuncaoMenu? cancel}) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -166,14 +170,14 @@ class ListaComprasState extends State<ListaCompras> {
             child: Text(msg),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Cancelar'),
               onPressed: () {
                 if (cancel != null) cancel();
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Confirmar'),
               onPressed: () {
                 func();
@@ -189,5 +193,4 @@ class ListaComprasState extends State<ListaCompras> {
   bool _isKeyboardActive() {
     return MediaQuery.of(context).viewInsets.bottom != 0;
   }
-
 }

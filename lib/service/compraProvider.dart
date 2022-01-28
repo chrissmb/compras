@@ -4,7 +4,6 @@ import 'defaultProvider.dart';
 import 'grupoProvider.dart';
 
 class CompraProvider extends DefaultProvider {
-
   static final tbCompra = 'compra';
 
   static final _sql = '''
@@ -16,11 +15,10 @@ class CompraProvider extends DefaultProvider {
     ''';
 
   Future<Compra> save(Compra compra) async {
-    if (compra == null) return null;
     if (compra.id == null) {
-      compra.id = await db.insert(tbCompra, compra.toMap());
+      compra.id = await (await db).insert(tbCompra, compra.toMap());
     } else {
-      await db.update(
+      await (await db).update(
         tbCompra,
         compra.toMap(),
         where: 'id = ?',
@@ -30,19 +28,18 @@ class CompraProvider extends DefaultProvider {
     return compra;
   }
 
-  Future<List<Compra>> getALl() async {
-    var lista = await db.rawQuery(_sql);
+  Future<List<Compra>> getAll() async {
+    var lista = await (await db).rawQuery(_sql);
     return lista.map((c) => Compra.fromMap(c)).toList();
   }
 
   Future<Compra> getOne(int id) async {
-    if (id == null || id < 1) return null;
-    var lista = await db.rawQuery(_sql + ' where c.id = ?', [id]);
+    var lista = await (await db).rawQuery(_sql + ' where c.id = ?', [id]);
     return lista.map((c) => Compra.fromMap(c)).first;
   }
 
   Future<bool> delete(int id) async {
-    var idReturn = await db.delete(
+    var idReturn = await (await db).delete(
       tbCompra,
       where: 'id = ?',
       whereArgs: [id],
