@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
-abstract class DefaultProvider {
+abstract class BaseProviderSqflite {
   Database? _db;
 
   bool get isDbOpened => _db?.isOpen ?? false;

@@ -1,5 +1,5 @@
 import 'grupo.dart';
-import 'defaultBean.dart';
+import 'default_bean.dart';
 
 class Compra implements DefaultBean {
   int? id;

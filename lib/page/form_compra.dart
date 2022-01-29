@@ -1,12 +1,13 @@
+import 'package:compras/core/injetor.dart';
 import 'package:compras/schema/grupo.dart';
 import 'package:flutter/material.dart';
-import '../service/compraProvider.dart';
+import '../service/compra_provider.dart';
 import '../schema/compra.dart';
 
 class FormCompra extends StatefulWidget {
-  final CompraProvider provider;
+  //final CompraProvider provider;
 
-  FormCompra(this.provider);
+  //FormCompra(this.provider);
 
   @override
   FormCompraState createState() => FormCompraState();
@@ -15,6 +16,7 @@ class FormCompra extends StatefulWidget {
 class FormCompraState extends State<FormCompra> {
   final _formKey = GlobalKey<FormState>();
   var txtDescricaoCtrl = TextEditingController();
+  var _compraProvider = Injetor.instance<CompraProvider>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,36 +27,33 @@ class FormCompraState extends State<FormCompra> {
       body: Form(
         key: _formKey,
         child: Center(
-          child: ListView(
-            padding: EdgeInsets.all(20),
-            children: [
-              TextFormField(
-                onFieldSubmitted: (s) => saveCompra(),
-                style: TextStyle(
-                  fontSize: 30.0,
-                  color: Colors.black,
-                ),
-                controller: txtDescricaoCtrl,
-                decoration: InputDecoration(
-                  labelText: 'Descrição',
-                  labelStyle: TextStyle(fontSize: 30.0),
-                ),
-                validator: (valor) {
-                  if (valor?.trim().isEmpty ?? true) {
-                    return 'Por favor, digite a descrição';
-                  }
-                },
+          child: ListView(padding: EdgeInsets.all(20), children: [
+            TextFormField(
+              onFieldSubmitted: (s) => saveCompra(),
+              style: TextStyle(
+                fontSize: 30.0,
+                color: Colors.black,
               ),
-              Autocomplete<Grupo>(
-                optionsBuilder: (textEditingValue) {
-                  if (textEditingValue.text.isEmpty) {
-                    return Iterable<Grupo>.empty();
-                  }
+              controller: txtDescricaoCtrl,
+              decoration: InputDecoration(
+                labelText: 'Descrição',
+                labelStyle: TextStyle(fontSize: 30.0),
+              ),
+              validator: (valor) {
+                if (valor?.trim().isEmpty ?? true) {
+                  return 'Por favor, digite a descrição';
+                }
+              },
+            ),
+            Autocomplete<Grupo>(
+              optionsBuilder: (textEditingValue) {
+                if (textEditingValue.text.isEmpty) {
                   return Iterable<Grupo>.empty();
-                },
-              )
-            ]
-          ),
+                }
+                return Iterable<Grupo>.empty();
+              },
+            )
+          ]),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -67,7 +66,7 @@ class FormCompraState extends State<FormCompra> {
 
   void saveCompra() {
     if (_formKey.currentState?.validate() ?? false) {
-      widget.provider
+      _compraProvider
           .save(
         Compra.novo(txtDescricaoCtrl.text.trim(), null),
       )

@@ -1,4 +1,4 @@
-import 'defaultBean.dart';
+import 'default_bean.dart';
 
 class Grupo implements DefaultBean {
   int? id;

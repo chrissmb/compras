@@ -1,6 +1,7 @@
+import 'package:compras/core/injetor.dart';
 import 'package:flutter/material.dart';
 import '../schema/compra.dart';
-import '../service/compraProvider.dart';
+import '../service/compra_provider.dart';
 import '../page/form_compra.dart';
 import '../component/item_compra.dart';
 import '../component/errorWindow.dart';
@@ -16,7 +17,7 @@ class ListaCompras extends StatefulWidget {
 
 class ListaComprasState extends State<ListaCompras> {
   List<Compra> _compras = [];
-  CompraProvider _provider = CompraProvider();
+  CompraProvider _provider = Injetor.instance<CompraProvider>();
   List<ItemCompra> _listItem = [];
 
   @override
@@ -65,10 +66,8 @@ class ListaComprasState extends State<ListaCompras> {
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
               onPressed: () async {
-                var retorno = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FormCompra(_provider)));
+                var retorno = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => FormCompra()));
                 if (retorno == null) {
                   _getCompras();
                 }
