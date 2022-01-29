@@ -80,20 +80,23 @@ class FormCompraState extends State<FormCompra> {
   }
 
   void saveCompra() {
-    if (_formKey.currentState?.validate() ?? false) {
-      Compra? compra = widget.compra;
-      if (compra == null) {
-        compra = Compra.novo(_txtDescricaoCtrl.text.trim(), null);
-      }
-      compra.grupo = _grupoSelecionado;
-      var callbackNavigatorPop = (_) => Navigator.pop(context);
-      if (compra.grupo != null) {
-        _compraProvider.save(compra).then(callbackNavigatorPop);
-      } else if (_textGrupo?.isNotEmpty ?? false) {
-        _compraProvider
-            .saveWithGrupo(compra, _textGrupo!)
-            .then(callbackNavigatorPop);
-      }
+    if (!(_formKey.currentState?.validate() ?? true)) {
+      return;
+    }
+    Compra? compra = widget.compra;
+    if (compra == null) {
+      compra = Compra.novo(_txtDescricaoCtrl.text.trim(), null);
+    } else {
+      compra.descricao = _txtDescricaoCtrl.text.trim();
+    }
+    compra.grupo = _grupoSelecionado;
+    var callbackNavigatorPop = (_) => Navigator.pop(context);
+    if (compra.grupo != null || (_textGrupo?.isEmpty ?? true)) {
+      _compraProvider.save(compra).then(callbackNavigatorPop);
+    } else {
+      _compraProvider
+          .saveWithGrupo(compra, _textGrupo!)
+          .then(callbackNavigatorPop);
     }
   }
 
