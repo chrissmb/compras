@@ -4,7 +4,7 @@ import '../schema/compra.dart';
 import '../service/compra_provider.dart';
 import '../page/form_compra.dart';
 import '../component/item_compra.dart';
-import '../component/errorWindow.dart';
+import '../component/error_window.dart';
 
 enum menu { deleteChecked, deleteAll }
 
@@ -67,7 +67,7 @@ class ListaComprasState extends State<ListaCompras> {
               foregroundColor: Colors.white,
               onPressed: () async {
                 var retorno = await Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FormCompra()));
+                    MaterialPageRoute(builder: (context) => FormCompra(null)));
                 if (retorno == null) {
                   _getCompras();
                 }

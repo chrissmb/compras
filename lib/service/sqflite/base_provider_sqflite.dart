@@ -6,11 +6,11 @@ abstract class BaseProviderSqflite {
 
   bool get isDbOpened => _db?.isOpen ?? false;
 
-  Future get db async {
+  Future<Database> get db async {
     if (!isDbOpened) {
       await open();
     }
-    return _db;
+    return _db!;
   }
 
   final _sqlCreate = '''

@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'package:compras/core/injetor.dart';
+import 'package:compras/schema/grupo.dart';
+import 'package:compras/service/grupo_provider.dart';
+
 import '../../schema/compra.dart';
 import 'base_provider_sqflite.dart';
 import 'grupo_provider_sqflite.dart';
@@ -15,6 +19,8 @@ class CompraProviderSqflite extends BaseProviderSqflite
       left join ${GrupoProviderSqflite.tbGrupo} g
         on g.id = c.grupo_id
     ''';
+
+  var grupoProvider = Injetor.instance<GrupoProvider>();
 
   @override
   Future<Compra> save(Compra compra) async {
@@ -45,10 +51,16 @@ class CompraProviderSqflite extends BaseProviderSqflite
 
   @override
   Future<void> delete(int id) async {
-    return (await db).delete(
+    await (await db).delete(
       tbCompra,
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  @override
+  Future<Compra> saveWithGrupo(Compra compra, String grupoDescricao) async {
+    compra.grupo = await grupoProvider.save(Grupo.novo(grupoDescricao));
+    return save(compra);
   }
 }

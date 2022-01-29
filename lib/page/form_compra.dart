@@ -1,13 +1,15 @@
+import 'package:compras/component/error_window.dart';
 import 'package:compras/core/injetor.dart';
 import 'package:compras/schema/grupo.dart';
+import 'package:compras/service/grupo_provider.dart';
 import 'package:flutter/material.dart';
 import '../service/compra_provider.dart';
 import '../schema/compra.dart';
 
 class FormCompra extends StatefulWidget {
-  //final CompraProvider provider;
+  final Compra? compra;
 
-  //FormCompra(this.provider);
+  FormCompra(this.compra);
 
   @override
   FormCompraState createState() => FormCompraState();
@@ -15,8 +17,18 @@ class FormCompra extends StatefulWidget {
 
 class FormCompraState extends State<FormCompra> {
   final _formKey = GlobalKey<FormState>();
-  var txtDescricaoCtrl = TextEditingController();
-  var _compraProvider = Injetor.instance<CompraProvider>();
+  final _txtDescricaoCtrl = TextEditingController();
+  final _compraProvider = Injetor.instance<CompraProvider>();
+  final _grupoProvider = Injetor.instance<GrupoProvider>();
+  var _grupos = <Grupo>[];
+  Grupo? _grupoSelecionado;
+  String? _textGrupo;
+
+  @override
+  void initState() {
+    super.initState();
+    aplicarGrupos();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +41,11 @@ class FormCompraState extends State<FormCompra> {
         child: Center(
           child: ListView(padding: EdgeInsets.all(20), children: [
             TextFormField(
-              onFieldSubmitted: (s) => saveCompra(),
               style: TextStyle(
                 fontSize: 30.0,
                 color: Colors.black,
               ),
-              controller: txtDescricaoCtrl,
+              controller: _txtDescricaoCtrl,
               decoration: InputDecoration(
                 labelText: 'Descrição',
                 labelStyle: TextStyle(fontSize: 30.0),
@@ -50,14 +61,18 @@ class FormCompraState extends State<FormCompra> {
                 if (textEditingValue.text.isEmpty) {
                   return Iterable<Grupo>.empty();
                 }
-                return Iterable<Grupo>.empty();
+
+                return _grupos.where(
+                    (grupo) => grupo.descricao.contains(textEditingValue.text));
               },
+              onSelected: (grupo) => _grupoSelecionado = grupo,
+              displayStringForOption: (option) => option.descricao,
             )
           ]),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: Icon(Icons.save),
         backgroundColor: Colors.green,
         onPressed: saveCompra,
       ),
@@ -66,13 +81,25 @@ class FormCompraState extends State<FormCompra> {
 
   void saveCompra() {
     if (_formKey.currentState?.validate() ?? false) {
-      _compraProvider
-          .save(
-        Compra.novo(txtDescricaoCtrl.text.trim(), null),
-      )
-          .then((id) {
-        Navigator.pop(context);
-      });
+      Compra? compra = widget.compra;
+      if (compra == null) {
+        compra = Compra.novo(_txtDescricaoCtrl.text.trim(), null);
+      }
+      compra.grupo = _grupoSelecionado;
+      var callbackNavigatorPop = (_) => Navigator.pop(context);
+      if (compra.grupo != null) {
+        _compraProvider.save(compra).then(callbackNavigatorPop);
+      } else if (_textGrupo?.isNotEmpty ?? false) {
+        _compraProvider
+            .saveWithGrupo(compra, _textGrupo!)
+            .then(callbackNavigatorPop);
+      }
     }
+  }
+
+  void aplicarGrupos() {
+    _grupoProvider.getAll().then((value) => _grupos = value,
+        onError: (e) =>
+            ErrorWindow.showError('Erro ao obter grupos: $e', context));
   }
 }

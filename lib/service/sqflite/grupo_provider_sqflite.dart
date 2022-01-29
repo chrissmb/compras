@@ -36,10 +36,16 @@ class GrupoProviderSqflite extends BaseProviderSqflite
 
   @override
   Future<void> delete(int id) async {
-    return (await db).delete(
+    await (await db).delete(
       tbGrupo,
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  Future<List<Grupo>> getByDescricao(String descricao) async {
+    var lista = await (await db)
+        .query(tbGrupo, where: 'descricao = ?', whereArgs: [descricao]);
+    return lista.map((g) => Grupo.fromMap(g)).toList();
   }
 }
