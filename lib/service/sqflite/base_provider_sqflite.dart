@@ -18,7 +18,7 @@ abstract class BaseProviderSqflite {
     create table grupo (
       id integer primary key,
       descricao text not null
-    )
+    );
 
     create table compra (
       id integer primary key,
@@ -26,7 +26,7 @@ abstract class BaseProviderSqflite {
       status integer not null,
       grupo_id integer,
       foreign key(grupo_id) references grupo(id)
-    )
+    );
   ''';
 
   Future open() async {
