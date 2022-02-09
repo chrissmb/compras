@@ -14,6 +14,7 @@ class Grupo implements DefaultBean {
       : id = map['id'],
         descricao = map['descricao'];
 
+  @override
   toMap() {
     return <String, dynamic>{'id': id, 'descricao': descricao};
   }

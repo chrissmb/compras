@@ -18,6 +18,7 @@ class FormCompra extends StatefulWidget {
 class FormCompraState extends State<FormCompra> {
   final _formKey = GlobalKey<FormState>();
   final _txtDescricaoCtrl = TextEditingController();
+  TextEditingController? _txtGrupoCtrl;
   final _compraProvider = Injetor.instance<CompraProvider>();
   final _grupoProvider = Injetor.instance<GrupoProvider>();
   var _grupos = <Grupo>[];
@@ -61,12 +62,27 @@ class FormCompraState extends State<FormCompra> {
                 if (textEditingValue.text.isEmpty) {
                   return Iterable<Grupo>.empty();
                 }
-
                 return _grupos.where(
                     (grupo) => grupo.descricao.contains(textEditingValue.text));
               },
               onSelected: (grupo) => _grupoSelecionado = grupo,
               displayStringForOption: (option) => option.descricao,
+              fieldViewBuilder:
+                  (buildContext, txtController, focuNode, onFieldSubmit) {
+                    _txtGrupoCtrl = txtController;
+                return TextFormField(
+                  controller: txtController,
+                  focusNode: focuNode,
+                  decoration: const InputDecoration(
+                    labelText: 'Grupo',
+                    labelStyle: TextStyle(fontSize: 30.0),
+                  ),
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    color: Colors.black,
+                  ),
+                );
+              },
             )
           ]),
         ),
@@ -90,12 +106,13 @@ class FormCompraState extends State<FormCompra> {
       compra.descricao = _txtDescricaoCtrl.text.trim();
     }
     compra.grupo = _grupoSelecionado;
+    var txtGrupo = _txtGrupoCtrl?.text.trim() ?? '';
     var callbackNavigatorPop = (_) => Navigator.pop(context);
-    if (compra.grupo != null || (_textGrupo?.isEmpty ?? true)) {
+    if (compra.grupo != null || (txtGrupo.isEmpty)) {
       _compraProvider.save(compra).then(callbackNavigatorPop);
     } else {
       _compraProvider
-          .saveWithGrupo(compra, _textGrupo!)
+          .saveWithGrupo(compra, txtGrupo)
           .then(callbackNavigatorPop);
     }
   }

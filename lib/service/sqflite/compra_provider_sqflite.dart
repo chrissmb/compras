@@ -18,6 +18,7 @@ class CompraProviderSqflite extends BaseProviderSqflite
       from $tbCompra c
       left join ${GrupoProviderSqflite.tbGrupo} g
         on g.id = c.grupo_id
+      order by g.descricao, c.descricao
     ''';
 
   var grupoProvider = Injetor.instance<GrupoProvider>();
@@ -41,7 +42,12 @@ class CompraProviderSqflite extends BaseProviderSqflite
   Future<List<Compra>> getAll() async {
     var lista = await (await db).rawQuery(_sql);
     return lista.map((c) => Compra.fromMap(c)).toList();
+    //return lista.map(fromMap).toList();
   }
+
+  Compra fromMap(Map<String, Object?> c) {
+    return Compra.fromMap(c);
+  } 
 
   @override
   Future<Compra> getOne(int id) async {

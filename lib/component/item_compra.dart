@@ -62,7 +62,7 @@ class _ItemCompraState extends State<ItemCompra> {
   Widget _getItemLabel() {
     Compra compra = widget.compra;
     return Text(
-      compra.descricao,
+      '${compra.descricao} - ${compra.grupo?.descricao ?? ''}',
       style: TextStyle(
         fontSize: 20.0,
         color: compra.status ? Colors.grey : Colors.black,

@@ -2,6 +2,8 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
 abstract class BaseProviderSqflite {
+  final _pathDatabase = 'compras.db';
+
   Database? _db;
 
   bool get isDbOpened => _db?.isOpen ?? false;
@@ -9,34 +11,39 @@ abstract class BaseProviderSqflite {
   Future<Database> get db async {
     if (!isDbOpened) {
       await open();
-    }
+    } 
+    // else {
+    //   await _db!.close();
+    //   deleteDatabase(_pathDatabase);
+    // }
     return _db!;
   }
 
-  final _sqlCreate = '''
-
+  final _sqlCreateGrupo = '''
     create table grupo (
       id integer primary key,
       descricao text not null
-    );
-
+    )
+  ''';
+  
+  final _sqlCreateCompra = '''
     create table compra (
       id integer primary key,
       descricao text not null,
       status integer not null,
       grupo_id integer,
       foreign key(grupo_id) references grupo(id)
-    );
+    )
   ''';
 
   Future open() async {
-    String path = 'compras.db';
     try {
       _db = await openDatabase(
-        path,
+        _pathDatabase,
         version: 1,
         onCreate: (Database dbase, int version) async {
-          await dbase.execute(_sqlCreate);
+          await dbase.execute(_sqlCreateGrupo);
+          await dbase.execute(_sqlCreateCompra);
         },
       );
     } catch (e) {

@@ -6,11 +6,11 @@ class ErrorWindow {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Erro"),
-          content: new Text('Erro: $msg'),
+          title: const Text("Erro"),
+          content: Text('Erro: $msg'),
           actions: <Widget>[
-            new TextButton(
-              child: new Text("OK"),
+            TextButton(
+              child: const Text("OK"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
