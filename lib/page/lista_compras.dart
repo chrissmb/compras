@@ -24,8 +24,6 @@ class ListaComprasState extends State<ListaCompras> {
   void initState() {
     super.initState();
     _getCompras();
-    // _provider.open().then((d) {
-    // });
   }
 
   @override
@@ -66,11 +64,9 @@ class ListaComprasState extends State<ListaCompras> {
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
               onPressed: () async {
-                var retorno = await Navigator.push(context,
+                await Navigator.push(context,
                     MaterialPageRoute(builder: (context) => FormCompra(null)));
-                if (retorno == null) {
-                  _getCompras();
-                }
+                _getCompras();
               },
             ),
     );
@@ -83,14 +79,13 @@ class ListaComprasState extends State<ListaCompras> {
       listItem.add(ItemCompra(
         compra: compra,
         switchStatus: _switchStatus,
+        refreshCompras: _getCompras,
         excluiCompra: _confirmaExclusaoLongPress,
-        renameCompra: _provider.save,
       ));
-
-      setState(() {
-        _listItem = listItem;
-      });
     }
+    setState(() {
+      _listItem = listItem;
+    });
   }
 
   void renomeia(Compra compra) {
@@ -138,23 +133,24 @@ class ListaComprasState extends State<ListaCompras> {
             _deleteAllCompras);
         break;
     }
-    _getCompras();
   }
 
   void _deleteChecked() {
-    _compras.forEach((compra) {
+    _deleteCheckedAsync().then((value) => _getCompras(),
+        onError: (e) => ErrorWindow.showError(e, context));
+  }
+
+  Future<void> _deleteCheckedAsync() async {
+    for (var compra in _compras) {
       if (compra.status) {
-        _provider.delete(compra.id!);
+        await _provider.delete(compra.id!);
       }
-    });
-    _getCompras();
+    }
   }
 
   void _deleteAllCompras() {
-    _compras.forEach((compra) {
-      _provider.delete(compra.id!);
-    });
-    _getCompras();
+    _provider.deleteAll().then((_) => _getCompras(),
+        onError: (e) => ErrorWindow.showError(e, context));
   }
 
   Future<void> _dialogMenu(String msg, FuncaoMenu func,

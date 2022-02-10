@@ -1,22 +1,23 @@
+import 'package:compras/page/form_compra.dart';
 import 'package:flutter/material.dart';
 import '../schema/compra.dart';
 
-typedef SimpleAction = void Function();
-typedef ActionDynamic = void Function(dynamic x);
-typedef ActionCompra = void Function(Compra compra);
-typedef ActionInt = void Function(int id);
+// typedef SimpleAction = void Function();
+// typedef ActionDynamic = void Function(dynamic x);
+// typedef ActionCompra = void Function(Compra compra);
+// typedef ActionInt = void Function(int id);
 
 class ItemCompra extends StatefulWidget {
   final Compra compra;
-  final ActionCompra switchStatus;
-  final ActionInt excluiCompra;
-  final ActionCompra renameCompra;
+  void Function(Compra compra) switchStatus;
+  void Function() refreshCompras;
+  void Function(int id) excluiCompra;
 
   ItemCompra({
     required this.compra,
     required this.switchStatus,
+    required this.refreshCompras,
     required this.excluiCompra,
-    required this.renameCompra,
   });
 
   @override
@@ -36,13 +37,17 @@ class _ItemCompraState extends State<ItemCompra> {
       onDismissed: (d) => widget.excluiCompra(compra.id!),
       child: ListTile(
         onTap: () => widget.switchStatus(compra),
-        onLongPress: _alternaEdicao,
+        onLongPress: () async {
+          await Navigator.push(context,
+              MaterialPageRoute(builder: (context) => FormCompra(compra)));
+          widget.refreshCompras();
+        }, //_alternaEdicao,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 20.0,
           vertical: 10.0,
         ),
-        leading: _edicao ? _getConfirme() : _getAvatar(),
-        title: _edicao ? _getItemInput() : _getItemLabel(),
+        leading: _getAvatar(),
+        title: _getItemLabel(),
       ),
     );
   }
@@ -70,64 +75,5 @@ class _ItemCompraState extends State<ItemCompra> {
             compra.status ? TextDecoration.lineThrough : TextDecoration.none,
       ),
     );
-  }
-
-  Widget _getItemInput() {
-    _txtController.text = widget.compra.descricao;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: Form(
-            key: _formKey,
-            child: TextFormField(
-              controller: _txtController,
-              validator: (val) {
-                if (val?.trim().isEmpty ?? true) {
-                  return 'Por favor, digite a descrição';
-                }
-              },
-              onFieldSubmitted: (_) => _renameCompra,
-              onEditingComplete: _renameCompra,
-            ),
-          ),
-        ),
-        _getCancel(),
-      ],
-    );
-  }
-
-  Widget _getConfirme() {
-    return IconButton(
-      icon: Icon(
-        Icons.done,
-        color: Colors.green,
-      ),
-      onPressed: _renameCompra,
-    );
-  }
-
-  Widget _getCancel() {
-    return IconButton(
-      icon: Icon(
-        Icons.cancel,
-        color: Colors.red,
-      ),
-      onPressed: _alternaEdicao,
-    );
-  }
-
-  void _alternaEdicao() {
-    setState(() {
-      _edicao = !_edicao;
-    });
-  }
-
-  void _renameCompra() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    Compra compra = widget.compra;
-    compra.descricao = _txtController.text;
-    widget.renameCompra(widget.compra);
-    _alternaEdicao();
   }
 }

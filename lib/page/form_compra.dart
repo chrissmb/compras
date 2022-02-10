@@ -23,12 +23,12 @@ class FormCompraState extends State<FormCompra> {
   final _grupoProvider = Injetor.instance<GrupoProvider>();
   var _grupos = <Grupo>[];
   Grupo? _grupoSelecionado;
-  String? _textGrupo;
 
   @override
   void initState() {
     super.initState();
     aplicarGrupos();
+    preencherDescricao();
   }
 
   @override
@@ -62,14 +62,16 @@ class FormCompraState extends State<FormCompra> {
                 if (textEditingValue.text.isEmpty) {
                   return Iterable<Grupo>.empty();
                 }
-                return _grupos.where(
-                    (grupo) => grupo.descricao.contains(textEditingValue.text));
+                return _grupos.where((grupo) => grupo.descricao
+                    .toLowerCase()
+                    .contains(textEditingValue.text.toLowerCase()));
               },
               onSelected: (grupo) => _grupoSelecionado = grupo,
               displayStringForOption: (option) => option.descricao,
               fieldViewBuilder:
                   (buildContext, txtController, focuNode, onFieldSubmit) {
-                    _txtGrupoCtrl = txtController;
+                _txtGrupoCtrl = txtController;
+                preencherGrupo(txtController);
                 return TextFormField(
                   controller: txtController,
                   focusNode: focuNode,
@@ -109,7 +111,8 @@ class FormCompraState extends State<FormCompra> {
     var txtGrupo = _txtGrupoCtrl?.text.trim() ?? '';
     var callbackNavigatorPop = (_) => Navigator.pop(context);
     if (compra.grupo != null || (txtGrupo.isEmpty)) {
-      _compraProvider.save(compra).then(callbackNavigatorPop);
+      _compraProvider.save(compra).then(callbackNavigatorPop,
+          onError: (e) => ErrorWindow.showError(e, context));
     } else {
       _compraProvider
           .saveWithGrupo(compra, txtGrupo)
@@ -121,5 +124,17 @@ class FormCompraState extends State<FormCompra> {
     _grupoProvider.getAll().then((value) => _grupos = value,
         onError: (e) =>
             ErrorWindow.showError('Erro ao obter grupos: $e', context));
+  }
+
+  void preencherDescricao() {
+    var compra = widget.compra;
+    if (compra == null) return;
+    _txtDescricaoCtrl.text = compra.descricao;
+  }
+
+  void preencherGrupo(TextEditingController textEditingController) {
+    var compra = widget.compra;
+    if (compra == null) return;
+    textEditingController.text = compra.grupo?.descricao ?? '';
   }
 }

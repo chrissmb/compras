@@ -11,21 +11,20 @@ abstract class BaseProviderSqflite {
   Future<Database> get db async {
     if (!isDbOpened) {
       await open();
-    } 
-    // else {
-    //   await _db!.close();
-    //   deleteDatabase(_pathDatabase);
-    // }
+    } /*else {
+      await _db!.close();
+      deleteDatabase(_pathDatabase);
+    }*/
     return _db!;
   }
 
   final _sqlCreateGrupo = '''
     create table grupo (
       id integer primary key,
-      descricao text not null
+      descricao text not null unique
     )
   ''';
-  
+
   final _sqlCreateCompra = '''
     create table compra (
       id integer primary key,

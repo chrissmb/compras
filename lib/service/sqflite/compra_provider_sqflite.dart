@@ -42,12 +42,7 @@ class CompraProviderSqflite extends BaseProviderSqflite
   Future<List<Compra>> getAll() async {
     var lista = await (await db).rawQuery(_sql);
     return lista.map((c) => Compra.fromMap(c)).toList();
-    //return lista.map(fromMap).toList();
   }
-
-  Compra fromMap(Map<String, Object?> c) {
-    return Compra.fromMap(c);
-  } 
 
   @override
   Future<Compra> getOne(int id) async {
@@ -68,5 +63,10 @@ class CompraProviderSqflite extends BaseProviderSqflite
   Future<Compra> saveWithGrupo(Compra compra, String grupoDescricao) async {
     compra.grupo = await grupoProvider.save(Grupo.novo(grupoDescricao));
     return save(compra);
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await (await db).delete(tbCompra);
   }
 }

@@ -8,6 +8,8 @@ class GrupoProviderSqflite extends BaseProviderSqflite
 
   @override
   Future<Grupo> save(Grupo grupo) async {
+    Grupo? grupoDb = await getByDescricao(grupo.descricao);
+    if (grupoDb != null) return grupoDb;
     if (grupo.id == null) {
       grupo.id = await (await db).insert(tbGrupo, grupo.toMap());
     } else {
@@ -43,9 +45,11 @@ class GrupoProviderSqflite extends BaseProviderSqflite
     );
   }
 
-  Future<List<Grupo>> getByDescricao(String descricao) async {
-    var lista = await (await db)
-        .query(tbGrupo, where: 'descricao = ?', whereArgs: [descricao]);
-    return lista.map((g) => Grupo.fromMap(g)).toList();
+  @override
+  Future<Grupo?> getByDescricao(String descricao) async {
+    var lista = await (await db).query(tbGrupo,
+        where: 'lower(descricao) = ?', whereArgs: [descricao.toLowerCase()]);
+    if (lista.isEmpty) return null;
+    return lista.map((g) => Grupo.fromMap(g)).first;
   }
 }
